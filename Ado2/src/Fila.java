@@ -3,6 +3,7 @@ public class Fila {
 
     public void enfileirar(Pessoa pessoa) {
         lista.adicionar(pessoa);
+
     }
 
     public Pessoa desenfileirar() {
@@ -10,7 +11,13 @@ public class Fila {
             return null;
         }
         Pessoa pessoa = lista.inicio.dado;
-        lista.remover(pessoa.nome);
+        lista.inicio = lista.inicio.proximo;
+
+        if (lista.inicio != null) {
+            lista.inicio.anterior = null;
+        } else {
+            lista.fim = null;
+        }
         return pessoa;
     }
 
