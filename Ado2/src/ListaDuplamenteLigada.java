@@ -4,50 +4,38 @@ public class ListaDuplamenteLigada {
 
     public No buscar(String nome) {
         No atual = inicio;
-        while (atual != null) {
-            if (atual.dado.nome.equalsIgnoreCase(nome)) {
-                return atual;
-            }
+        while (atual != null && !atual.dado.nome.equalsIgnoreCase(nome)) {
             atual = atual.proximo;
         }
-        return null;
+        return atual;
     }
 
-    public void remover(String nome) {
-        No atual = inicio;
-        while (atual != null) {
-            if (atual.dado.nome.equalsIgnoreCase(nome)) {
-                if (atual.anterior != null) {
-                    atual.anterior.proximo = atual.proximo;
-                } else {
-                    inicio = atual.proximo;
-                }
-                if (atual.proximo != null) {
-                    atual.proximo.anterior = atual.anterior;
-                } else {
-                    fim = atual.anterior;
-                }
-                return;
-            }
-            atual = atual.proximo;
-        }
+    public boolean remover(String nome) {
+        No atual = buscar(nome);
+        if (atual == null) return false;
+        No anterior = atual.anterior;
+        No proximo = atual.proximo;
+        if (anterior != null) anterior.proximo = proximo;
+        inicio = (anterior == null) ? proximo : inicio;
+        if (proximo != null) proximo.anterior = anterior;
+        fim = (proximo == null) ? anterior : fim;
+        return true;
     }
 
     public void concatenar(ListaDuplamenteLigada outraLista) {
         if (outraLista.inicio == null) return;
-        if (this.fim == null) {
-            this.inicio = outraLista.inicio;
-        } else {
-            this.fim.proximo = outraLista.inicio;
-            outraLista.inicio.anterior = this.fim;
+        fim = (fim == null) ? outraLista.inicio : fim;
+        inicio = (fim == outraLista.inicio) ? outraLista.inicio : inicio;
+        if (fim != outraLista.inicio) {
+            fim.proximo = outraLista.inicio;
+            outraLista.inicio.anterior = fim;
         }
-        this.fim = outraLista.fim;
+        fim = outraLista.fim;
     }
 
     public ListaDuplamenteLigada[] separar() {
         ListaDuplamenteLigada lista1 = new ListaDuplamenteLigada();
         ListaDuplamenteLigada lista2 = new ListaDuplamenteLigada();
-
         No atual = inicio;
         boolean alterna = true;
         while (atual != null) {
@@ -64,13 +52,12 @@ public class ListaDuplamenteLigada {
 
     public void adicionar(Pessoa pessoa) {
         No novoNo = new No(pessoa);
-        if (fim == null) {
-            inicio = fim = novoNo;
-        } else {
+        if (fim != null) {
             fim.proximo = novoNo;
             novoNo.anterior = fim;
-            fim = novoNo;
         }
+        fim = novoNo;
+        if (inicio == null) inicio = novoNo;
     }
 
     public void imprimir() {
@@ -82,34 +69,38 @@ public class ListaDuplamenteLigada {
     }
 
     public static void main(String[] args) {
-
         ListaDuplamenteLigada lista1 = new ListaDuplamenteLigada();
-        lista1.adicionar(new Pessoa("jacinto", "123.456.789-91", "Rua que, 478"));
-        lista1.adicionar(new Pessoa("Janonis", "987.654.321-11", "Rua Jos"));
+        lista1.adicionar(new Pessoa("TimTim", "123", "Rua A"));
+        lista1.adicionar(new Pessoa("Mary", "456", "Rua B"));
 
         ListaDuplamenteLigada lista2 = new ListaDuplamenteLigada();
-        lista2.adicionar(new Pessoa("Karim", "789.222.333-44", "Rua Car"));
-        lista2.adicionar(new Pessoa("Mary", "101.102.103.104-11", "Rua Der"));
+        lista2.adicionar(new Pessoa("carlin", "789", "Rua C"));
+        lista2.adicionar(new Pessoa("Any", "101", "Rua D"));
 
-        System.out.println("Lista 1:"); lista1.imprimir();
-        System.out.println("\nLista 2:"); lista2.imprimir();
+        System.out.println("Lista 1:");
+        lista1.imprimir();
+        System.out.println("\nLista 2:");
+        lista2.imprimir();
 
-        System.out.println("\nConcatenando Lista 1 e Lista 2..."); lista1.concatenar(lista2);
+        System.out.println("\nConcatenando Lista 1 e Lista 2...");
+        lista1.concatenar(lista2);
         lista1.imprimir();
 
         System.out.println("\nSeparando a lista concatenada...");
         ListaDuplamenteLigada[] listasSeparadas = lista1.separar();
 
-        System.out.println("Primeira lista separada:"); listasSeparadas[0].imprimir();
-        System.out.println("\nSegunda lista separada:"); listasSeparadas[1].imprimir();
+        System.out.println("Primeira lista separada:");
+        listasSeparadas[0].imprimir();
 
+        System.out.println("\nSegunda lista separada:");
+        listasSeparadas[1].imprimir();
 
-        String nomeParaBuscar = "mary";
-        System.out.println("\nBuscando '" + nomeParaBuscar + "':"); No noEncontrado = lista1.buscar(nomeParaBuscar);
-        System.out.println(noEncontrado != null ? "Pessoa encontrada: " + noEncontrado.dado : "Não encontrado");
+        System.out.println("\nBuscando 'Mary':");
+        No noEncontrado = lista1.buscar("Mary");
+        System.out.println(noEncontrado != null ? noEncontrado.dado : "Não encontrado");
 
-        System.out.println("\nRemovendo '" + nomeParaBuscar + "':");
-        lista1.remover(nomeParaBuscar);lista1.imprimir();
-
+        System.out.println("\nRemovendo 'Mary':");
+        lista1.remover("Mary");
+        lista1.imprimir();
     }
 }

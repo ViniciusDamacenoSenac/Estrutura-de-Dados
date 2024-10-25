@@ -1,9 +1,9 @@
-public class No {
+class No {
     Pessoa dado;
     No proximo;
     No anterior;
 
-    public No(Pessoa dado) {
+    No(Pessoa dado) {
         this.dado = dado;
     }
 }
